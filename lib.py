@@ -11,13 +11,13 @@ def logRaw(gate, no, sensor, epoch, action):
     os.fsync(f)
 
 def pressed(gate, no, sensor):
-    def sensorPressed():
+    def sensorPressed(*arg):
         now = time.time()
         logRaw(gate, no, sensor, now, "pressed")
     return sensorPressed
 
 def released(gate, no, sensor):
-    def sensorReleased():
+    def sensorReleased(*arg):
         now = time.time()
         logRaw(gate, no, sensor, now, "released")
     return sensorReleased
