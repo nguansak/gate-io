@@ -1,7 +1,11 @@
 import sqlite3
 import csv
+import json
 from lib import dict_factory
 from counter import *
+from csv_db import *
+
+fieldnames = ("epoch","gate","no","sensor", "action")
 
 class GateService():
     def __init__(self):
@@ -9,7 +13,7 @@ class GateService():
         conn.row_factory = dict_factory
         self.conn = conn
         self.counter = Counter()
-
+        self.csvDb = CsvDb()
         self.loadDb()
 
     def loadDb(self):
@@ -31,6 +35,15 @@ class GateService():
             return {}
 
     def handleGateRaw(self, gateCode, rawData):
-        self.counter.count(rawData)
+        print(rawData)
+        
+        reader = csv.DictReader( rawData)
+        for row in reader:
+            print("reader", row)
+        # self.csvDb.saveRaw(rawData)
+        # self.counter.count(rawData)
 
+    def handleGateJson(self, gateCode, data):
+        self.csvDb.saveJson(gateCode, data["data"])
+        self.counter.count(gateCode, data["data"])
 

@@ -6,6 +6,7 @@ from flask import (
 )
 from gate_service import *
 import sqlite3
+import json
 
 app = Flask(__name__, template_folder="publics")
 #app.config["DEBUG"] = True
@@ -24,8 +25,17 @@ def gate(gateCode):
 @app.route('/gate/<string:gateCode>/raw', methods=['GET', 'POST'])
 def gateRaw(gateCode):
     if request.method == 'POST':
+        data = request.data.decode("utf-8")
+        if gateCode == "test":
+            service.handleGateRaw(gateCode, data)
+        return jsonify({})
+
+
+@app.route('/gate/<string:gateCode>/json', methods=['GET', 'POST'])
+def gateJson(gateCode):
+    if request.method == 'POST':
         data = request.json
-        service.handleGateRaw(gateCode, data)
+        service.handleGateJson(gateCode, data)
         return jsonify({})
 
 #app.run(debug=True, host='0.0.0.0', port=5000)

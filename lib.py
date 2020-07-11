@@ -18,6 +18,12 @@ def logRaw(gate, no, sensor, epoch, action):
 
 def sendRawData(gate, no, sensor, epoch, action):
     url = baseUrl + "/gate/" + gate + "/raw"
+    data = "{:.6f}".format(epoch)+","+gate+","+no+","+sensor+","+action
+    response = requests.post(url, data=data)
+    return response.ok
+
+def sendJsonData(gate, no, sensor, epoch, action):
+    url = baseUrl + "/gate/" + gate + "/json"
     data = { "gate": gate, "no": no, "sensor": sensor, "epoch": epoch, "action": action }
     response = requests.post(url, json={"data":[data]})
     return response.ok
@@ -26,7 +32,7 @@ def pressed(gate, no, sensor):
     def sensorPressed(*arg):
         now = time.time()
         logRaw(gate, no, sensor, now, "pressed")
-        sendRawData(gate, no, sensor, now, "pressed")
+        sendJsonData(gate, no, sensor, now, "pressed")
     return sensorPressed
 
 def released(gate, no, sensor):
