@@ -9,6 +9,7 @@ class CsvDb():
         self.f_out1 = open("raw_out1.csv", "a")
         self.f_out2 = open("raw_out2.csv", "a")
         self.f_test = open("raw_test.csv", "a")
+        self.f_count = open("raw_count.csv", "a")
 
     def saveRaw(self, gate, rawData):
         for r in rawData["data"]:
@@ -46,3 +47,10 @@ class CsvDb():
             self.f_test.write(rawData+"\n")
             self.f_test.flush()
             os.fsync(self.f_test)
+
+    def saveCount(self, gate, r):
+        print(json.dumps(r))
+        csv = "{:.6f}".format(r['t'])+","+r['gate']+","+"{:d}".format(r['no'])+","+"{:d}".format(r['dir'])
+        self.f_count.write(csv+"\n")
+        self.f_count.flush()
+        os.fsync(self.f_count)

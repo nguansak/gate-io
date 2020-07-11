@@ -38,5 +38,13 @@ def gateJson(gateCode):
         service.handleGateJson(gateCode, data)
         return jsonify({})
 
+
+@app.route('/gate/<string:gateCode>/counter', methods=['GET', 'POST'])
+def gateCounter(gateCode):
+    if request.method == 'POST':
+        data = request.json
+        service.handleGateCounter(gateCode, data)
+        return jsonify({})
+
 #app.run(debug=True, host='0.0.0.0', port=5000)
 app.run(host='0.0.0.0', port=5000)

@@ -2,8 +2,12 @@ import time
 import os
 import requests
 import json
+from counter import *
 
 baseUrl = "http://192.168.10.100:5000"
+# baseUrl = "http://127.0.0.1:5000"
+
+counter = Counter(0.5)
 
 def fileOpen(gate):
     global f
@@ -33,12 +37,15 @@ def pressed(gate, no, sensor):
         now = time.time()
         logRaw(gate, no, sensor, now, "pressed")
         sendJsonData(gate, no, sensor, now, "pressed")
+        counter.handleRealtime(gate, no, sensor, "pressed")
     return sensorPressed
 
 def released(gate, no, sensor):
     def sensorReleased(*arg):
         now = time.time()
         logRaw(gate, no, sensor, now, "released")
+        sendJsonData(gate, no, sensor, now, "released")
+        counter.handleRealtime(gate, no, sensor, "released")
     return sensorReleased
 
 def dict_factory(cursor, row):

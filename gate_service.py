@@ -12,9 +12,10 @@ class GateService():
         conn = sqlite3.connect('gate.db', check_same_thread=False)
         conn.row_factory = dict_factory
         self.conn = conn
-        self.counter = Counter()
+        # self.counter = Counter()
         self.csvDb = CsvDb()
         self.loadDb()
+        self.totalPeople = 0
 
     def loadDb(self):
         self.gate = self.loadTable("gate")
@@ -45,5 +46,14 @@ class GateService():
 
     def handleGateJson(self, gateCode, data):
         self.csvDb.saveJson(gateCode, data["data"])
-        self.counter.count(gateCode, data["data"])
+        #self.counter.count(gateCode, data["data"])
 
+    def handleGateCounter(self, gateCode, data):
+        self.csvDb.saveCount(gateCode, data)
+        self.totalPeople = self.totalPeople + data['dir']
+        if self.totalPeople < 0:
+            self.totalPeople = 0
+        print("Total = ", "{:d}".format(self.totalPeople))
+
+    def getTotal(self):
+        return self.totalPeople
