@@ -10,12 +10,12 @@ fieldnames = ("epoch","gate","no","sensor", "action")
 
 class GateService():
     def __init__(self, reloadTime):
-        conn = sqlite3.connect('gate.db', check_same_thread=False)
-        conn.row_factory = dict_factory
-        self.conn = conn
+        #conn = sqlite3.connect('gate.db', check_same_thread=False)
+        #conn.row_factory = dict_factory
+        #self.conn = conn
         # self.counter = Counter()
-        self.csvDb = CsvDb()
-        self.loadDb()
+        #self.csvDb = CsvDb()
+        #self.loadDb()
         self.db = Db("data.db")
 
         self.totalPeople = self.db.selectTotal()
