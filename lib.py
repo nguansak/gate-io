@@ -14,7 +14,7 @@ def fileOpen(gate):
     f = open("raw_" + gate + ".csv", "a")
 
 def logRaw(gate, no, sensor, epoch, action):
-    data = "{:.6f}".format(epoch)+","+gate+","+no+","+sensor+","+action
+    data = "{:.6f}".format(epoch)+","+gate+","+"{:d}".format(no)+","+sensor+","+action
     print("raw:"+data)
     f.write(data+"\n")
     f.flush()
@@ -22,7 +22,7 @@ def logRaw(gate, no, sensor, epoch, action):
 
 def sendRawData(gate, no, sensor, epoch, action):
     url = baseUrl + "/gate/" + gate + "/raw"
-    data = "{:.6f}".format(epoch)+","+gate+","+no+","+sensor+","+action
+    data = "{:.6f}".format(epoch)+","+gate+","+"{:d}".format(no)+","+sensor+","+action
     response = requests.post(url, data=data)
     return response.ok
 

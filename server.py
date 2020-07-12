@@ -58,7 +58,7 @@ def gateCounter(gateCode):
 @app.route('/total', methods=['GET'])
 def total():
     total = service.getTotal()
-    return jsonify({"total": total})
+    return jsonify(total)
 
 #app.run(debug=True, host='0.0.0.0', port=5000)
 app.run(host='0.0.0.0', port=5000)

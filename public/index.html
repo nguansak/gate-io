@@ -21,6 +21,11 @@
             setInterval(function () {
                 $.getJSON('/total', {}, function(data) {
                     $("#total").text(data.total);
+                    var diff = (data.actual -data.total)
+                    if (diff == 0) {
+                        diff = ""
+                    }
+                    $("#actual").text(diff);
                 })
             }, 1000);
 
@@ -37,18 +42,29 @@
         });
     </script>
     <style>
-        #total {
+        .total {
             font-size: 300pt;
             padding: 30px;
             background: lightgray;
-            width: 300pt;
-            text-align: right;
-            left: auto;
+            width: 500pt;
+            text-align: center;
+            left: 0;
+            right: 0;
+            margin: auto;
             display: block;
+            border: solid 30px darkseagreen;
+            top: 0;
+            bottom: 0;
+            height: 500px;
+            margin-top: 100px;
+        }
+        .actual {
+            color: darkgray;
         }
     </style>
 </head>
 <body id="body">
     <h1>Counter</h1>
     <div class="total" id="total">0</div>
+    <div class="actual" id="actual">0</div>
 </body>

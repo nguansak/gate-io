@@ -18,7 +18,8 @@ class GateService():
         #self.loadDb()
         self.db = Db("data.db")
 
-        self.totalPeople = self.db.selectTotal()
+        self.actualPeople = self.db.selectTotal()
+        self.totalPeople = self.actualPeople
         if self.totalPeople < 0:
             self.totalPeople = 0
 
@@ -65,19 +66,20 @@ class GateService():
         # self.csvDb.saveRaw(rawData)
         # self.counter.count(rawData)
 
-    # def handleGateJson(self, gateCode, data):
-    #     self.csvDb.saveJson(gateCode, data["data"])
-    #     #self.counter.count(gateCode, data["data"])
+    def handleGateJson(self, gateCode, data):
+        self.csvDb.saveJson(gateCode, data["data"])
+        #self.counter.count(gateCode, data["data"])
 
     def handleGateCounter(self, gateCode, data):
         self.csvDb.saveCount(gateCode, data)
         self.db.insertCounter(data['gate'], data['no'], data['dir'], data['t'])
 
         self.totalPeople = self.totalPeople + data['dir']
+        self.actualPeople = self.actualPeople + data['dir']
         if self.totalPeople < 0:
             self.totalPeople = 0
-        print("total: ", "{:d}".format(self.totalPeople))
+        print("total: ", "{:d}".format(self.totalPeople)+ " actual: ", "{:d}".format(self.actualPeople))
 
     def getTotal(self):
-        return self.totalPeople
+        return  {"total":self.totalPeople, "actual": self.actualPeople}
     
