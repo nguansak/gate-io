@@ -1,0 +1,28 @@
+
+<head>
+    <script src="./js/jquery.min.js"></script>
+    <script type=text/javascript>
+        $(function() {
+            setInterval(function () {
+                $.getJSON('/total', {}, function(data) {
+                    $("#total").text(data.total);
+                })
+            }, 1000);
+        });
+    </script>
+    <style>
+        #total {
+            font-size: 300pt;
+            padding: 30px;
+            background: lightgray;
+            width: 300pt;
+            text-align: right;
+            left: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Counter</h1>
+    <div class="total" id="total">0</div>
+</body>

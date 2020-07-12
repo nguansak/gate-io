@@ -53,7 +53,7 @@ class GateService():
         self.totalPeople = self.totalPeople + data['dir']
         if self.totalPeople < 0:
             self.totalPeople = 0
-        print("Total = ", "{:d}".format(self.totalPeople))
+        print("total: ", "{:d}".format(self.totalPeople))
 
     def getTotal(self):
         return self.totalPeople

@@ -3,18 +3,23 @@ from flask import (
     render_template,
     request,
     jsonify,
+    send_from_directory,
 )
 from gate_service import *
 import sqlite3
 import json
 
-app = Flask(__name__, template_folder="publics")
+app = Flask(__name__, template_folder="public")
 #app.config["DEBUG"] = True
 service = GateService() 
 
 @app.route('/', methods=['GET'])
 def home():
     return render_template("index.html")
+
+@app.route('/js/<path:path>')
+def send_js(path):
+    return send_from_directory('./public/js', path)
 
 @app.route('/gate/<string:gateCode>', methods=['GET', 'POST'])
 def gate(gateCode):
@@ -45,6 +50,12 @@ def gateCounter(gateCode):
         data = request.json
         service.handleGateCounter(gateCode, data)
         return jsonify({})
+
+
+@app.route('/total', methods=['GET'])
+def total():
+    total = service.getTotal()
+    return jsonify({"total": total})
 
 #app.run(debug=True, host='0.0.0.0', port=5000)
 app.run(host='0.0.0.0', port=5000)
