@@ -5,7 +5,7 @@
         function sendCountData(dir) {
             let gate = "sys"
             let url = "/gate/" + gate + "/counter"
-            let time = (new Date()).getTime()
+            let time = (new Date()).getTime()/1000
             let data = { "gate": gate, "no": 1, "t": time, "dir": dir }
             console.log({data})
             $.ajax({

@@ -14,7 +14,7 @@ class GateService():
         #conn.row_factory = dict_factory
         #self.conn = conn
         # self.counter = Counter()
-        #self.csvDb = CsvDb()
+        self.csvDb = CsvDb()
         #self.loadDb()
         self.db = Db("data.db")
 
@@ -65,9 +65,9 @@ class GateService():
         # self.csvDb.saveRaw(rawData)
         # self.counter.count(rawData)
 
-    def handleGateJson(self, gateCode, data):
-        self.csvDb.saveJson(gateCode, data["data"])
-        #self.counter.count(gateCode, data["data"])
+    # def handleGateJson(self, gateCode, data):
+    #     self.csvDb.saveJson(gateCode, data["data"])
+    #     #self.counter.count(gateCode, data["data"])
 
     def handleGateCounter(self, gateCode, data):
         self.csvDb.saveCount(gateCode, data)
