@@ -49,8 +49,9 @@ class CsvDb():
             os.fsync(self.f_test)
 
     def saveCount(self, gate, r):
-        print(json.dumps(r))
+        # print(json.dumps(r))
         csv = "{:.6f}".format(r['t'])+","+r['gate']+","+"{:d}".format(r['no'])+","+"{:d}".format(r['dir'])
+        print("count: " + csv)
         self.f_count.write(csv+"\n")
         self.f_count.flush()
         os.fsync(self.f_count)

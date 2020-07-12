@@ -17,8 +17,8 @@
             });
         }
 
-        $(function() {
-            setInterval(function () {
+        function reloadData() {
+            setTimeout(function() {
                 $.getJSON('/total', {}, function(data) {
                     $("#total").text(data.total);
                     var diff = (data.actual -data.total)
@@ -26,8 +26,15 @@
                         diff = ""
                     }
                     $("#actual").text(diff);
+                    reloadData()
                 })
-            }, 1000);
+                .error(function() {
+                    reloadData()
+                })
+            }, 1000)
+        }
+        $(function() {
+            reloadData();
 
             $( "#body" ).keypress(function(key) {
                 if (key.key === "]") {// up
