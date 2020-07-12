@@ -30,7 +30,7 @@ class Counter():
                     elif diff < timeout:
                         timeout = diff
 
-            #print("wake again in {:.6f}".format(timeout) + "s")
+            # print("wake again in {:.6f}".format(timeout) + "s")
             time.sleep(timeout)
 
     def count(self, gateCode, data):
@@ -44,10 +44,12 @@ class Counter():
     def handleRealtime(self, gate, no, sensor, action):
         now = time.time()
 
+        # print({gate, no, sensor, action})
+
         code = gate + "{:d}".format(no)
         
         if not code in self.map.keys():
-            self.map[code] = { "ta": 0,  "tb": 0, "sa": 0, "sb": 0, "s": "idle", "gate": gate, "no": no, "last": 0.0 }
+            self.map[code] = { "ta": 0,  "tb": 0, "sa": 0, "sb": 0, "s": "idle", "gate": gate, "no": no, "last": 0.0, "a": 0, "b": 0 }
         # t = time, s = state
 
         val = self.map[code]
@@ -56,14 +58,13 @@ class Counter():
         if val["last"] > 0.0:
             diff = now - val["last"]
         data = "{:.6f}".format(now)+","+gate+","+"{:d}".format(no)+","+sensor+","+action+","+"{:.6f}".format(diff)
-        print("counter:" + data)
+        # print("counter:" + data)
 
         val["last"] = now
         if val["s"] == "idle": # Start New
             if action == "pressed":
                 val["s"] = "entered"
                 val["t"] = now
-                
                 val[sensor] = 1
                 val["exp"] = now + self.timeout
                 val["in"] = sensor
@@ -73,6 +74,7 @@ class Counter():
                 val["exp"] = now + self.timeout
                 val[sensor] = 0
         self.map[code] = val
+        # print(val)
 
     def endSession(self, code):
         val = self.map[code]
@@ -87,15 +89,16 @@ class Counter():
                 dir = -1
 
         data = { "gate": val["gate"], "no": val["no"], "dir": dir, "t": val["t"] }
-        print("counter: " + json.dumps(data))
-        self.sendCountData(val["gate"], val["no"], val["t"], dir)
+        # print("counter: " + json.dumps(data))
+        self.sendCountData(val["gate"], val["no"], dir, val["t"])
 
         val["s"] = "idle"
         self.map[code] = val
 
 
-    def sendCountData(self, gate, no, epoch, dir):
+    def sendCountData(self, gate, no, dir, epoch):
         url = baseUrl + "/gate/" + gate + "/counter"
         data = { "gate": gate, "no": no, "t": epoch, "dir": dir }
+        print(data)
         response = requests.post(url, json=data)
         return response.ok

@@ -25,15 +25,20 @@ from pynput.keyboard import Key, KeyCode, Listener
 
 def on_press(key):
     if key == KeyCode.from_char("a"):
-        counter.handleRealtime("in", 1, "a", "pressed")
+        counter.handleRealtime("sys", 1, "a", "pressed")
     if key == KeyCode.from_char("s"):
-        counter.handleRealtime("in", 1, "b", "pressed")
+        counter.handleRealtime("sys", 1, "b", "pressed")
+
+    if key == KeyCode.from_char("]"):
+        counter.sendCountData("sys", 1, 1, time.time())
+    if key == KeyCode.from_char("["):
+        counter.sendCountData("sys", 1, -1, time.time())
 
 def on_release(key):
     if key == KeyCode.from_char("a"):
-        counter.handleRealtime("in", 1, "a", "released")
+        counter.handleRealtime("sys", 1, "a", "released")
     if key == KeyCode.from_char("s"):
-        counter.handleRealtime("in", 1, "b", "released")
+        counter.handleRealtime("sys", 1, "b", "released")
     if key == Key.esc:
         # Stop listener
         return False

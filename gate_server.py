@@ -8,10 +8,13 @@ from flask import (
 from gate_service import *
 import sqlite3
 import json
+from db import *
 
 app = Flask(__name__, template_folder="public")
 #app.config["DEBUG"] = True
-service = GateService() 
+service = GateService(60) 
+db = Db("data.db")
+db.initDb()
 
 @app.route('/', methods=['GET'])
 def home():

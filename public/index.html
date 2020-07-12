@@ -2,12 +2,38 @@
 <head>
     <script src="./js/jquery.min.js"></script>
     <script type=text/javascript>
+        function sendCountData(dir) {
+            let gate = "sys"
+            let url = "/gate/" + gate + "/counter"
+            let time = (new Date()).getTime()
+            let data = { "gate": gate, "no": 1, "t": time, "dir": dir }
+            console.log({data})
+            $.ajax({
+                type: "POST",
+                url: url,
+                dataType: "json",
+                data : JSON.stringify(data),
+                contentType : 'application/json'
+            });
+        }
+
         $(function() {
             setInterval(function () {
                 $.getJSON('/total', {}, function(data) {
                     $("#total").text(data.total);
                 })
             }, 1000);
+
+            $( "#body" ).keypress(function(key) {
+                if (key.key === "]") {// up
+                    console.log("up")
+                    sendCountData(1)
+                }
+                if (key.key === "[") {// down
+                    console.log("down")
+                    sendCountData(-1)
+                }
+            });
         });
     </script>
     <style>
@@ -22,7 +48,7 @@
         }
     </style>
 </head>
-<body>
+<body id="body">
     <h1>Counter</h1>
     <div class="total" id="total">0</div>
 </body>
