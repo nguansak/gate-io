@@ -73,7 +73,7 @@ class CsvDb():
 
     def saveCount(self, gate, r):
         # print(json.dumps(r))
-        csv = "{:.6f}".format(r['t'])+","+"{:.6f}".format(r['rt'])+","+r['gate']+","+"{:d}".format(r['no'])+',"'+r['dt']+'",'+"{:d}".format(r['dir'])
+        csv = "{:.6f}".format(r['t'])+","+"{:.6f}".format(r['rt'])+","+r['gate']+","+"{:d}".format(r['no'])+',"'+r['dt']+'",'+"{:d}".format(r['dir_old'])+','+"{:d}".format(r['dir'])
         print("count: " + csv)
         self.f_count.write(csv+"\n")
         self.f_count.flush()
