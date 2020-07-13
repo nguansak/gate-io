@@ -21,7 +21,7 @@ except:
 app = Flask(__name__, template_folder="public")
 #app.config["DEBUG"] = True
 service = GateService(60) 
-db = Db("data.db")
+db = Db(path+"/data.db")
 db.initDb()
 
 @app.route('/', methods=['GET'])
