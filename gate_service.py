@@ -5,6 +5,8 @@ from lib import dict_factory
 from counter import *
 from csv_db import *
 from db import *
+from datetime import datetime
+import time
 
 fieldnames = ("epoch","gate","no","sensor", "action")
 
@@ -16,7 +18,10 @@ class GateService():
         # self.counter = Counter()
         self.csvDb = CsvDb()
         #self.loadDb()
-        self.db = Db("data.db")
+        today = datetime.today().strftime('%Y-%m-%d')
+        path = "data/" + today
+
+        self.db = Db(path+"/data.db")
 
         self.actualPeople = self.db.selectTotal()
         self.totalPeople = self.actualPeople
@@ -71,8 +76,11 @@ class GateService():
         #self.counter.count(gateCode, data["data"])
 
     def handleGateCounter(self, gateCode, data):
+        data['rt'] = data['t']
+        data['t'] = time.time()
+        data['dt'] = datetime.today().strftime('%Y-%m-%d %H:%m:%S')
         self.csvDb.saveCount(gateCode, data)
-        self.db.insertCounter(data['gate'], data['no'], data['dir'], data['t'])
+        self.db.insertCounter(data['gate'], data['no'], data['dir'], data['t'], data['rt'])
 
         self.totalPeople = self.totalPeople + data['dir']
         self.actualPeople = self.actualPeople + data['dir']

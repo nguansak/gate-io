@@ -9,6 +9,14 @@ from gate_service import *
 import sqlite3
 import json
 from db import *
+from datetime import datetime
+
+today = datetime.today().strftime('%Y-%m-%d')
+path = "data/" + today
+try:
+    os.mkdir(path)
+except:
+    print("exist path")
 
 app = Flask(__name__, template_folder="public")
 #app.config["DEBUG"] = True

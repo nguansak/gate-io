@@ -1,1 +1,1 @@
-tail -f d:/Projects/gate-io/raw_count.csv 
+tail -f "/D/App Project/Python/raw_count.csv"

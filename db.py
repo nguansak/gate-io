@@ -7,6 +7,7 @@ sql_create_counter_table = """
         gate TEXT NOT NULL,
         no INTEGER NOT NULL,
         t REAL NOT NULL,
+        rt REAL NOT NULL,
         dir INTEGER NOT NULL
     ); """
 
@@ -63,8 +64,8 @@ class Db():
     def initDb(self):
         self.execMutate(sql_create_counter_table)
   
-    def insertCounter(self, gate, no, dir, t):
-        sql = "INSERT INTO counter (gate, no, dir, t) VALUES ('" + gate + "'," + "{:d}".format(no) +  "," + "{:d}".format(dir) + "," + "{:.6f}".format(t) + ");"
+    def insertCounter(self, gate, no, dir, t, rt):
+        sql = "INSERT INTO counter (gate, no, dir, t, rt) VALUES ('" + gate + "'," + "{:d}".format(no) +  "," + "{:d}".format(dir) + "," + "{:.6f}".format(t) + "," + "{:.6f}".format(rt) + ");"
         self.execMutate(sql)
 
     def selectTotal(self):

@@ -1,15 +1,37 @@
 import csv
 import os
 import json
+from datetime import datetime,time
+import threading
 
 class CsvDb():
     def __init__(self):
-        self.f = open("raw_all.csv", "a")
-        self.f_in = open("raw_in.csv", "a")
-        self.f_out1 = open("raw_out1.csv", "a")
-        self.f_out2 = open("raw_out2.csv", "a")
-        self.f_test = open("raw_test.csv", "a")
-        self.f_count = open("raw_count.csv", "a")
+        today = datetime.today().strftime('%Y-%m-%d')
+        path = "data/" + today
+        self.f = open(path+"/raw_all.csv", "a")
+        self.f_in = open(path+"/raw_in.csv", "a")
+        self.f_out1 = open(path+"/raw_out1.csv", "a")
+        self.f_out2 = open(path+"/raw_out2.csv", "a")
+        self.f_test = open(path+"/raw_test.csv", "a")
+        self.f_count = open(path+"/raw_count.csv", "a")
+
+        thread = threading.Thread(target=self.run, args=())
+        thread.daemon = True
+        thread.start()
+
+    def run(self):
+        while True:
+            self.f.flush()
+            os.fsync(self.f)      
+            self.f_in.flush()
+            os.fsync(self.f_in)
+            self.f_out1.flush()
+            os.fsync(self.f_out1)
+            self.f_out2.flush()
+            os.fsync(self.f_out2)
+            self.f_test.flush()
+            os.fsync(self.f_test)
+            time.sleep(5000)
 
     def saveRaw(self, gate, rawData):
         for r in rawData["data"]:
@@ -25,32 +47,32 @@ class CsvDb():
   
     def saveData(self, gate, rawData):
         self.f.write(rawData+"\n")
-        self.f.flush()
-        os.fsync(self.f)
+        # self.f.flush()
+        # os.fsync(self.f)
 
         if gate == "in":
             self.f_in.write(rawData+"\n")
-            self.f_in.flush()
-            os.fsync(self.f_in)
+            # self.f_in.flush()
+            # os.fsync(self.f_in)
 
         if gate == "out1":
             self.f_out1.write(rawData+"\n")
-            self.f_out1.flush()
-            os.fsync(self.f_out1)
+            # self.f_out1.flush()
+            # os.fsync(self.f_out1)
 
         if gate == "out2":
             self.f_out2.write(rawData+"\n")
-            self.f_out2.flush()
-            os.fsync(self.f_out2)
+            # self.f_out2.flush()
+            # os.fsync(self.f_out2)
 
         if gate == "test":
             self.f_test.write(rawData+"\n")
-            self.f_test.flush()
-            os.fsync(self.f_test)
+            # self.f_test.flush()
+            # os.fsync(self.f_test)
 
     def saveCount(self, gate, r):
         # print(json.dumps(r))
-        csv = "{:.6f}".format(r['t'])+","+r['gate']+","+"{:d}".format(r['no'])+","+"{:d}".format(r['dir'])
+        csv = "{:.6f}".format(r['t'])+","+"{:.6f}".format(r['rt'])+","+r['gate']+","+"{:d}".format(r['no'])+',"'+r['dt']+'",'+"{:d}".format(r['dir'])
         print("count: " + csv)
         self.f_count.write(csv+"\n")
         self.f_count.flush()
