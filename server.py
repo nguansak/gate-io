@@ -10,6 +10,9 @@ import sqlite3
 import json
 from db import *
 from datetime import datetime
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 today = datetime.today().strftime('%Y-%m-%d')
 path = "data/" + today
