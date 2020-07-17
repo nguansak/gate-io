@@ -81,12 +81,12 @@ class GateService():
         data['dt'] = datetime.today().strftime('%Y-%m-%d %H:%m:%S')
         data['dir_old'] = data['dir']
 
-        # if data['dir'] == 0:
-        #     if data['gate'] == 'in':
-        #         data['dir'] = 1
+        if data['dir'] == 0:
+            #if data['gate'] == 'in':
+            #    data['dir'] = 1
 
-        #     if data['gate'] == 'out1' or data['gate'] == 'out2':
-        #         data['dir'] = -1
+            if data['gate'] == 'out1' or data['gate'] == 'out2':
+                data['dir'] = -1
 
         self.csvDb.saveCount(gateCode, data)
         self.db.insertCounter(data['gate'], data['no'], data['dir'], data['t'], data['rt'])
