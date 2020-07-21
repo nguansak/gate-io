@@ -29,6 +29,7 @@ class GateService():
             self.totalPeople = 0
 
         self.reloadTime = reloadTime
+        self.currentHour = 0
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
@@ -40,6 +41,7 @@ class GateService():
                 total = self.db.selectTotal()
                 if total >= 0:
                     self.totalPeople
+                self.taskGenerateReportRawCountInByHour()
                 time.sleep(self.reloadTime)
             except Error as e:
                 print(e)
@@ -76,10 +78,13 @@ class GateService():
         #self.counter.count(gateCode, data["data"])
 
     def handleGateCounter(self, gateCode, data):
+        year, month, day, hour = map(int, time.strftime("%Y %m %d %H").split())
         data['rt'] = data['t']
         data['t'] = time.time()
-        data['dt'] = datetime.today().strftime('%Y-%m-%d %H:%m:%S')
+        data['dt'] = time.strftime('%Y-%m-%d %H:%m:%S')
         data['dir_old'] = data['dir']
+        data['d'] = day
+        data['h'] = hour
 
         if data['dir'] == 0:
             if data['gate'] == 'in':
@@ -89,7 +94,7 @@ class GateService():
                 data['dir'] = -1
 
         self.csvDb.saveCount(gateCode, data)
-        self.db.insertCounter(data['gate'], data['no'], data['dir'], data['t'], data['rt'])
+        self.db.insertCounter(data['gate'], data['no'], data['dir_old'], data['dir'], data['t'], data['rt'], data['d'], data['h'])
 
         self.totalPeople = self.totalPeople + data['dir']
         self.actualPeople = self.actualPeople + data['dir']
@@ -100,3 +105,14 @@ class GateService():
     def getTotal(self):
         return  {"total":self.totalPeople, "actual": self.actualPeople}
     
+    def taskGenerateReportRawCountInByHour(self):
+        day, currentHour = map(int, time.strftime("%d %H").split())
+        
+        if self.currentHour != currentHour:
+            print("currentHour", currentHour)
+            self.currentHour = currentHour
+            self.generateReportRawCountInByHour(currentHour)
+
+    def generateReportRawCountInByHour(self, currentHour):
+        row = self.db.rawCountInByHour(currentHour)
+        self.csvDb.saveReportRawCountInByHour(row)
