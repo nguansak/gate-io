@@ -7,14 +7,17 @@ import threading
 
 class CsvDb():
     def __init__(self):
-        today = datetime.today().strftime('%Y-%m-%d')
-        path = "data/" + today
+        self.today = time.strftime('%Y-%m-%d')
+        path = "data/" + self.today
         self.f = open(path+"/raw_all.csv", "a")
         self.f_in = open(path+"/raw_in.csv", "a")
         self.f_out1 = open(path+"/raw_out1.csv", "a")
         self.f_out2 = open(path+"/raw_out2.csv", "a")
         self.f_test = open(path+"/raw_test.csv", "a")
         self.f_count = open(path+"/raw_count.csv", "a")
+
+        # self.reportPath = "../report"
+        self.reportPath = "E:\Dropbox\+JoM-ROG\Toyota People Counting\Hour report"
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
@@ -78,3 +81,15 @@ class CsvDb():
         self.f_count.write(csv+"\n")
         self.f_count.flush()
         os.fsync(self.f_count)
+
+    def saveReportRawCountInByHour(self, data):
+        f_report= open(self.reportPath+"/report_by_hour_" + self.today + ".csv", "w")
+        f_report.write("time,in\n")
+
+        if data != None:
+            for r in data:
+                csv = '"' + "{:d}.00".format(r[0])+" - "+"{:d}.59".format(r[0])+'",'+"{:d}".format(r[1])
+                print("ReportRawCountInByHour: " + csv)
+                f_report.write(csv+"\n")
+        f_report.flush()
+        os.fsync(f_report)
