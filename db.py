@@ -112,7 +112,7 @@ class Db():
             return 0
 
     def rawCountInByHour(self, hour):
-        sql = "select hour, count(*) as total from counter where raw_dir = 1 and hour >= 10 and hour < 22 and hour < " + "{:d}".format(hour) + " group by hour"
+        sql = "select hour, count(*) as total from counter where gate = 'in' and raw_dir = 1 and hour >= 10 and hour < 22 and hour < " + "{:d}".format(hour) + " group by hour"
         try:
             row = self.execQueryMany(sql)
             return row
