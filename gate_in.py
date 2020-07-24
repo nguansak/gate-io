@@ -13,8 +13,8 @@ p2a = 19
 p2b = 26
 p3a = 20
 p3b = 21
-p4a = 12
-p4b = 16
+p4a = 16
+p4b = 12
 
 fileOpen(gate)
 
