@@ -2,8 +2,10 @@ from smbus import SMBus
 import time
 
 # https://www.instructables.com/id/Raspberry-Pi-I2C-Python/
+# https://www.abelectronics.co.uk/kb/article/1092/i2c-part-3---i-c-tools-in-linux
 # enable i2c
-# apt-get install i2c-tools python-smbus.
+# apt-get install i2c-tools python-smbus
+# sudo i2cdetect -y 1
 
 bus = SMBus(1)  # Create a new I2C bus
 

@@ -22,21 +22,30 @@
 """
 `adafruit_debouncer`
 ====================================================
+
 Debounces an arbitrary predicate function (typically created as a lambda) of 0
 arguments.  Since a very common use is debouncing a digital input pin, the
 initializer accepts a DigitalInOut object instead of a lambda.
+
 * Author(s): Dave Astels
+
 Implementation Notes
 --------------------
+
 **Hardware:**
+
 Not all hardware / CircuitPython combinations are capable of running the
 debouncer correctly for an extended length of time.  If this line works
 on your microcontroller, then the debouncer should work forever:
+
 ``from time import monotonic_ns``
+
 If it gives an ImportError, then the time values available in Python become
 less accurate over the days, and the debouncer will take longer to react to
 button presses.
+
 **Software and Dependencies:**
+
 * Adafruit CircuitPython firmware for the supported boards:
   https://github.com/adafruit/circuitpython/releases
 """
@@ -47,21 +56,17 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_Debouncer.git"
 
 import time
-from micropython import const
+# from micropython import const
 
-_DEBOUNCED_STATE = const(0x01)
-_UNSTABLE_STATE = const(0x02)
-_CHANGED_STATE = const(0x04)
+_DEBOUNCED_STATE = (0x01)
+_UNSTABLE_STATE = (0x02)
+_CHANGED_STATE = (0x04)
+
 
 # Find out whether the current CircuitPython really supports time.monotonic_ns(),
 # which doesn't have the accuracy limitation.
-try:
-    time.monotonic_ns()
-    TICKS_PER_SEC = 1_000_000_000
-    MONOTONIC_TICKS = time.monotonic_ns
-except (AttributeError, NotImplementedError):
-    TICKS_PER_SEC = 1
-    MONOTONIC_TICKS = time.monotonic
+TICKS_PER_SEC = 1
+MONOTONIC_TICKS = time.monotonic
 
 
 class Debouncer:
@@ -150,3 +155,4 @@ class Debouncer:
     @property
     def current_duration(self):
         """Return the number of seconds since the most recent transition."""
+        return (MONOTONIC_TICKS() - self._state_changed_ticks) / TICKS_PER_SEC

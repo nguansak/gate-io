@@ -2,6 +2,6 @@
 # launcher.sh
 
 cd /home/pi/Projects/gate-io
-sudo python gate_out2.py
+sudo python3 gate_out2.py
 cd /
 

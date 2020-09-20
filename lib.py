@@ -33,6 +33,7 @@ def sendJsonData(gate, no, sensor, epoch, action):
     return response.ok
 
 def pressed(gate, no, sensor):
+    print(gate, no, sensor)
     def sensorPressed(*arg):
         now = time.time()
         logRaw(gate, no, sensor, now, "pressed")
@@ -41,6 +42,7 @@ def pressed(gate, no, sensor):
     return sensorPressed
 
 def released(gate, no, sensor):
+    print(gate, no, sensor)
     def sensorReleased(*arg):
         now = time.time()
         logRaw(gate, no, sensor, now, "released")
