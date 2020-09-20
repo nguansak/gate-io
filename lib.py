@@ -29,8 +29,11 @@ def sendRawData(gate, no, sensor, epoch, action):
 def sendJsonData(gate, no, sensor, epoch, action):
     url = baseUrl + "/gate/" + gate + "/json"
     data = { "gate": gate, "no": no, "sensor": sensor, "epoch": epoch, "action": action }
-    response = requests.post(url, json={"data":[data]})
-    return response.ok
+    try:
+        response = requests.post(url, json={"data":[data]})
+        return response.ok
+    except:
+        print ("Cannot send data to server")
 
 def pressed(gate, no, sensor):
     print(gate, no, sensor)

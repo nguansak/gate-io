@@ -100,5 +100,8 @@ class Counter():
         url = baseUrl + "/gate/" + gate + "/counter"
         data = { "gate": gate, "no": no, "t": epoch, "dir": dir }
         print(data)
-        response = requests.post(url, json=data)
-        return response.ok
+        try:
+            response = requests.post(url, json=data)
+            return response.ok
+        except:
+            print ("Cannot send data to server")

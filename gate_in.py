@@ -8,6 +8,8 @@ i2caddressB = 0x39
 gate = "in"
 nums = 8
 
+print("gate:", gate)
+
 fileOpen(gate)
 
 buttonsA = I2cButton(i2caddressA, 8)
