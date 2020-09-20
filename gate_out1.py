@@ -11,14 +11,23 @@ gate = 'out1'
 p1a = 20
 p1b = 21
 
-button1a = Button(p1a, bounce_time=BOUNCE_TIME)
-button1b = Button(p1b, bounce_time=BOUNCE_TIME)
+fileOpen(gate)
+
+button1a = Button(p1a)
+button1b = Button(p1b)
 
 time1a = 0
 time1b = 0
 
-button1a.when_pressed = pressed(gate, '1', 'a')
-button1b.when_pressed = pressed(gate, '1', 'b')
+button1a.when_pressed = pressed(gate, 1, 'a')
+button1b.when_pressed = pressed(gate, 1, 'b')
+button1a.when_released = released(gate, 1, 'a')
+button1b.when_released = released(gate, 1, 'b')
+
+# pressed(gate, '1', 'a')()
+# pressed(gate, '1', 'b')()
+# pressed(gate, '1', 'b')()
+# pressed(gate, '1', 'a')()
 
 pause()
-f.close()
+fileClose()
