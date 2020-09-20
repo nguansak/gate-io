@@ -4,7 +4,7 @@ import requests
 import json
 from counter import *
 
-baseUrl = "http://192.168.10.100:5000"
+baseUrl = "http://192.168.1.100:5000"
 # baseUrl = "http://127.0.0.1:5000"
 
 counter = Counter(0.5)
