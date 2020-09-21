@@ -6,7 +6,7 @@
             let gate = "sys"
             let url = "/gate/" + gate + "/counter"
             let time = (new Date()).getTime()/1000
-            let data = { "gate": gate, "no": 1, "t": time, "dir": dir }
+            let data = { "gate": gate, "no": 1, "t": time, "dir": dir, "pat": "", "diff": 0, "duration": 0 }
             console.log({data})
             $.ajax({
                 type: "POST",
@@ -31,7 +31,7 @@
                 .error(function() {
                     reloadData()
                 })
-            }, 1000)
+            }, 500)
         }
         $(function() {
             reloadData();
