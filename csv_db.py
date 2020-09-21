@@ -45,7 +45,7 @@ class CsvDb():
 
     def saveJson(self, gate, jsonData):
         for r in jsonData:
-            csv = "{:.6f}".format(r['epoch'])+","+r['gate']+","+"{:d}".format(r['no'])+","+r['sensor']+","+r['action']+","+r['diff']
+            csv = "{:.6f}".format(r['epoch'])+","+r['gate']+","+"{:d}".format(r['no'])+","+r['sensor']+","+r['action']+","+"{:.6f}".format(r['diff'])
             print("raw:" + csv)
             self.saveData(gate, csv)
   
@@ -76,7 +76,7 @@ class CsvDb():
 
     def saveCount(self, gate, r):
         # print(json.dumps(r))
-        csv = "{:.6f}".format(r['t'])+","+"{:.6f}".format(r['rt'])+","+r['gate']+","+"{:d}".format(r['no'])+',"'+r['dt']+'",'+"{:d}".format(r['dir_old'])+','+"{:d}".format(r['dir'])+','+r['pat']
+        csv = "{:.6f}".format(r['t'])+","+"{:.6f}".format(r['rt'])+","+r['gate']+","+"{:d}".format(r['no'])+',"'+r['dt']+'",'+"{:d}".format(r['dir_old'])+','+"{:d}".format(r['dir'])+','+r['pat']+","+"{:.6f}".format(r['diff'])+","+"{:.6f}".format(r['duration'])
         print("count: " + csv)
         self.f_count.write(csv+"\n")
         self.f_count.flush()

@@ -29,7 +29,7 @@ class GateService():
             self.totalPeople = 0
 
         self.reloadTime = reloadTime
-        self.currentHour = 0
+        self.currentHour = -1
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
