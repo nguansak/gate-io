@@ -65,8 +65,14 @@ _CHANGED_STATE = (0x04)
 
 # Find out whether the current CircuitPython really supports time.monotonic_ns(),
 # which doesn't have the accuracy limitation.
-TICKS_PER_SEC = 1
-MONOTONIC_TICKS = time.monotonic
+try:
+    time.monotonic_ns()
+    TICKS_PER_SEC = 1_000_000_000
+    MONOTONIC_TICKS = time.monotonic_ns
+except (AttributeError, NotImplementedError):
+    TICKS_PER_SEC = 1
+    MONOTONIC_TICKS = time.monotonic
+
 
 
 class Debouncer:

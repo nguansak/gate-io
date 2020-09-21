@@ -2,6 +2,7 @@ import time
 import json
 import threading
 import requests
+from async_call import AsyncCall
 
 baseUrl = "http://192.168.1.100:5000"
 # baseUrl = "http://127.0.0.1:5000"
@@ -11,6 +12,7 @@ class Counter():
     def __init__(self, timeout=1):
         self.timeout = timeout
         self.map = {}
+        self.sendDataAsync = AsyncCall(self.sendCountData)
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
@@ -23,10 +25,12 @@ class Counter():
 
             for key in self.map.keys():
                 val = self.map[key]
+
+                # print(key, val["s"])
                 if val["s"] == "entered":
                     diff = val["exp"] - time.time()
                     if diff < 0:
-                        self.endSession(key)
+                        self.endSession(key, timeout)
                     elif diff < timeout:
                         timeout = diff
 
@@ -49,7 +53,7 @@ class Counter():
         code = gate + "{:d}".format(no)
         
         if not code in self.map.keys():
-            self.map[code] = { "ta": 0,  "tb": 0, "sa": 0, "sb": 0, "s": "idle", "gate": gate, "no": no, "last": 0.0, "a": 0, "b": 0 }
+            self.map[code] = { "ta": 0,  "tb": 0, "sa": 0, "sb": 0, "s": "idle", "gate": gate, "no": no, "last": 0.0, "a": 0, "b": 0, "exp":0, "in": "", "out": "", "pat": ""  }
         # t = time, s = state
 
         val = self.map[code]
@@ -59,6 +63,7 @@ class Counter():
             diff = now - val["last"]
         data = "{:.6f}".format(now)+","+gate+","+"{:d}".format(no)+","+sensor+","+action+","+"{:.6f}".format(diff)
         # print("counter:" + data)
+        val['diff'] = diff
 
         val["last"] = now
         if val["s"] == "idle": # Start New
@@ -74,9 +79,18 @@ class Counter():
                 val["exp"] = now + self.timeout
                 val[sensor] = 0
         self.map[code] = val
-        # print(val)
 
-    def endSession(self, code):
+        if action == "pressed":
+            pat = sensor.upper()
+            val["pat"] = val["pat"] + sensor.upper()
+        if action == "released":
+            pat = sensor.upper()
+            val["pat"] = val["pat"] + sensor
+
+        self.dumpState(val)
+        # print("------>", val)
+
+    def endSession(self, code, now):
         val = self.map[code]
         val["s"] = "final"
         self.map[code] = val
@@ -89,17 +103,29 @@ class Counter():
                 dir = -1
 
         data = { "gate": val["gate"], "no": val["no"], "dir": dir, "t": val["t"] }
-        # print("counter: " + json.dumps(data))
-        self.sendCountData(val["gate"], val["no"], dir, val["t"])
+        # print("END: " + json.dumps(data))
+
+        # print("=====> END", val)
+        self.dumpState(val)
+
+        # self.sendCountData(val["gate"], val["no"], dir, val["t"], val["pat"])
+        self.sendDataAsync.run(val["gate"], val["no"], dir, val["t"], val["pat"])
 
         val["s"] = "idle"
+        val["pat"] = ""
+        val["last"] = now
         self.map[code] = val
 
+        # + ', ' + val["in"] + ', ' + "{:.6f}".format(val["diff"])  +
+    def dumpState(self, val):
+        s = val["s"]
+        print('==>' + val["gate"] + "{:d}".format(val["no"]) + ', s:' + s[0:3] + ', in:' + val["in"] + ', out:' + val["out"] +", diff:{:.6f}".format(val["diff"]) + '(' + val["pat"] + ')' )
 
-    def sendCountData(self, gate, no, dir, epoch):
+    def sendCountData(self, gate, no, dir, epoch, pat):
         url = baseUrl + "/gate/" + gate + "/counter"
-        data = { "gate": gate, "no": no, "t": epoch, "dir": dir }
-        print(data)
+        data = { "gate": gate, "no": no, "t": epoch, "dir": dir, "pat": pat }
+        csv = "COUNT:"+"{:.6f}".format(epoch)+","+"{:4s}".format(gate)+","+"{:d}".format(no)+','+"{:d}".format(dir)+","+pat
+        print(csv,"\n")
         try:
             response = requests.post(url, json=data)
             return response.ok

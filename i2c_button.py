@@ -59,4 +59,4 @@ class I2cButton:
                     self.emitPressed(i)
                 if self.signel[i].rose:
                     self.emitReleased(i)
-            time.sleep(0.1)
+            # time.sleep(0.1)
