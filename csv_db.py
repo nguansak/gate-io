@@ -45,7 +45,7 @@ class CsvDb():
 
     def saveJson(self, gate, jsonData):
         for r in jsonData:
-            csv = "{:.6f}".format(r['epoch'])+","+r['gate']+","+"{:d}".format(r['no'])+","+r['sensor']+","+r['action']
+            csv = "{:.6f}".format(r['epoch'])+","+r['gate']+","+"{:d}".format(r['no'])+","+r['sensor']+","+r['action']+","+r['diff']
             print("raw:" + csv)
             self.saveData(gate, csv)
   

@@ -5,7 +5,7 @@ import threading
 from async_call import AsyncCall
 
 class I2cButton:
-    def __init__(self, address, nums, interval=0.010):
+    def __init__(self, address, nums, interval=0.05):
         self.data = 0
         self.address = address
         self.nums = nums
@@ -14,9 +14,10 @@ class I2cButton:
         self.released = {}
         self.busMask = 0
         self.bus = SMBus(1)
+        self.isRunning = False
         
         for i in range(self.nums):
-            self.signel[i] = Debouncer(self.readSignal(i))
+            self.signel[i] = Debouncer(self.readSignal(i), interval)
             self.busMask = self.busMask | (1 << i)
 
         thread = threading.Thread(target=self.run, args=())
@@ -40,16 +41,19 @@ class I2cButton:
 
     def emitPressed(self, pos):
         # print(pos, "pressed")
-        if (pos in self.pressed):
+        if (self.isRunning and pos in self.pressed):
             args = (False)
             self.pressed[pos].run(args)
 
     def emitReleased(self, pos):
         # print(pos, "released")
-        if (pos in self.released):
+        if (self.isRunning and pos in self.released):
             args = (False)
             self.released[pos].run(args)
     
+    def start(self):
+        self.isRunning = True
+
     def run(self):
         while True:
             self.update()
@@ -59,4 +63,3 @@ class I2cButton:
                     self.emitPressed(i)
                 if self.signel[i].rose:
                     self.emitReleased(i)
-            # time.sleep(0.1)

@@ -40,7 +40,7 @@ def pressed(gate, no, sensor):
     def sensorPressed(*arg):
         now = time.time()
         logRaw(gate, no, sensor, now, "pressed")
-        sendJsonData(gate, no, sensor, now, "pressed")
+        #sendJsonData(gate, no, sensor, now, "pressed")
         counter.handleRealtime(gate, no, sensor, "pressed")
     return sensorPressed
 
@@ -49,7 +49,7 @@ def released(gate, no, sensor):
     def sensorReleased(*arg):
         now = time.time()
         logRaw(gate, no, sensor, now, "released")
-        sendJsonData(gate, no, sensor, now, "released")
+        #sendJsonData(gate, no, sensor, now, "released")
         counter.handleRealtime(gate, no, sensor, "released")
     return sensorReleased
 

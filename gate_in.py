@@ -12,8 +12,8 @@ print("gate:", gate)
 
 fileOpen(gate)
 
-buttonsA = I2cButton(i2caddressA, 8)
-buttonsB = I2cButton(i2caddressB, 8)
+buttonsA = I2cButton(i2caddressA, nums)
+buttonsB = I2cButton(i2caddressB, nums)
 
 for i in range(nums):
     print(i)
@@ -21,6 +21,10 @@ for i in range(nums):
     buttonsA.whenReleased(i, released(gate, i+1, 'a'))
     buttonsB.whenPressed(i, pressed(gate, i+1, 'b'))
     buttonsB.whenReleased(i, released(gate, i+1, 'b'))
+
+time.sleep(1)
+buttonsA.start()
+buttonsB.start()
 
 pause()
 fileClose()

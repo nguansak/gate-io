@@ -9,7 +9,7 @@ baseUrl = "http://192.168.1.100:5000"
 
 
 class Counter():
-    def __init__(self, timeout=1):
+    def __init__(self, timeout=0.5):
         self.timeout = timeout
         self.map = {}
         self.sendDataAsync = AsyncCall(self.sendCountData)
@@ -30,7 +30,7 @@ class Counter():
                 if val["s"] == "entered":
                     diff = val["exp"] - time.time()
                     if diff < 0:
-                        self.endSession(key, timeout)
+                        self.endSession(key)
                     elif diff < timeout:
                         timeout = diff
 
@@ -53,17 +53,20 @@ class Counter():
         code = gate + "{:d}".format(no)
         
         if not code in self.map.keys():
-            self.map[code] = { "ta": 0,  "tb": 0, "sa": 0, "sb": 0, "s": "idle", "gate": gate, "no": no, "last": 0.0, "a": 0, "b": 0, "exp":0, "in": "", "out": "", "pat": ""  }
+            self.map[code] = { "ta": 0,  "tb": 0, "sa": 0, "sb": 0, "s": "idle", "gate": gate, "no": no, "last": now, "a": 0, "b": 0, "exp":0, "in": "", "out": "", "diff": 0.0, "pat": ""  }
         # t = time, s = state
 
         val = self.map[code]
 
+        
         diff = 0.0
         if val["last"] > 0.0:
             diff = now - val["last"]
+
+        val['diff'] = diff
+        #print("now:  {:.6f}".format(now) + "\n" + "last: {:.6f}".format(val["last"]) + "\n" + "diff: {:0000000000.6f}".format(val["diff"]))
         data = "{:.6f}".format(now)+","+gate+","+"{:d}".format(no)+","+sensor+","+action+","+"{:.6f}".format(diff)
         # print("counter:" + data)
-        val['diff'] = diff
 
         val["last"] = now
         if val["s"] == "idle": # Start New
@@ -74,23 +77,27 @@ class Counter():
                 val["exp"] = now + self.timeout
                 val["in"] = sensor
         elif val["s"] == "entered":
+            val["exp"] = now + self.timeout
             if action == "released":
                 val["out"] = sensor
-                val["exp"] = now + self.timeout
                 val[sensor] = 0
         self.map[code] = val
 
-        if action == "pressed":
-            pat = sensor.upper()
-            val["pat"] = val["pat"] + sensor.upper()
-        if action == "released":
-            pat = sensor.upper()
-            val["pat"] = val["pat"] + sensor
+        if val["s"] == "entered":
+            pat = "?"
+            if action == "pressed":
+                pat = sensor.upper()
+            if action == "released":
+                pat = sensor
+            val["pat"] = val["pat"] + pat
 
         self.dumpState(val)
         # print("------>", val)
 
-    def endSession(self, code, now):
+        self.sendJsonData(gate, no, sensor, now, "released", diff)
+
+    def endSession(self, code):
+        now = time.time()
         val = self.map[code]
         val["s"] = "final"
         self.map[code] = val
@@ -116,10 +123,13 @@ class Counter():
         val["last"] = now
         self.map[code] = val
 
+        # self.dumpState(val)
+
         # + ', ' + val["in"] + ', ' + "{:.6f}".format(val["diff"])  +
     def dumpState(self, val):
         s = val["s"]
-        print('==>' + val["gate"] + "{:d}".format(val["no"]) + ', s:' + s[0:3] + ', in:' + val["in"] + ', out:' + val["out"] +", diff:{:.6f}".format(val["diff"]) + '(' + val["pat"] + ')' )
+        diff = val["diff"]
+        print('==>' + val["gate"] + "{:d}".format(val["no"]) + ', s:' + s[0:3] + ', in:' + val["in"] + ', out:' + val["out"] +", diff:{:.6f}".format(val["diff"]) + ', pat:' + val["pat"] )
 
     def sendCountData(self, gate, no, dir, epoch, pat):
         url = baseUrl + "/gate/" + gate + "/counter"
@@ -128,6 +138,15 @@ class Counter():
         print(csv,"\n")
         try:
             response = requests.post(url, json=data)
+            return response.ok
+        except:
+            print ("Cannot send data to server")
+
+    def sendJsonData(elf, gate, no, sensor, epoch, action, diff):
+        url = baseUrl + "/gate/" + gate + "/json"
+        data = { "gate": gate, "no": no, "sensor": sensor, "epoch": epoch, "action": action, "diff": diff }
+        try:
+            response = requests.post(url, json={"data":[data]})
             return response.ok
         except:
             print ("Cannot send data to server")
