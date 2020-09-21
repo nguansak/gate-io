@@ -4,8 +4,8 @@ import requests
 import json
 from counter import *
 
-baseUrl = "http://192.168.10.100:5000"
-#baseUrl = "http://127.0.0.1:5000"
+baseUrl = "http://192.168.1.100:5000"
+# baseUrl = "http://127.0.0.1:5000"
 
 counter = Counter(0.5)
 
@@ -29,10 +29,14 @@ def sendRawData(gate, no, sensor, epoch, action):
 def sendJsonData(gate, no, sensor, epoch, action):
     url = baseUrl + "/gate/" + gate + "/json"
     data = { "gate": gate, "no": no, "sensor": sensor, "epoch": epoch, "action": action }
-    response = requests.post(url, json={"data":[data]})
-    return response.ok
+    try:
+        response = requests.post(url, json={"data":[data]})
+        return response.ok
+    except:
+        print ("Cannot send data to server")
 
 def pressed(gate, no, sensor):
+    print(gate, no, sensor)
     def sensorPressed(*arg):
         now = time.time()
         logRaw(gate, no, sensor, now, "pressed")
@@ -41,6 +45,7 @@ def pressed(gate, no, sensor):
     return sensorPressed
 
 def released(gate, no, sensor):
+    print(gate, no, sensor)
     def sensorReleased(*arg):
         now = time.time()
         logRaw(gate, no, sensor, now, "released")

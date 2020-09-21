@@ -1,33 +1,26 @@
-from gpiozero import Button
-from time import sleep
-import time
-import os
-from signal import pause
 from lib import *
+from signal import pause
+from i2c_button import I2cButton
 
-BOUNCE_TIME=0.1
+i2caddressA = 0x38
+i2caddressB = 0x39
 
-gate = 'out1'
-p1a = 20
-p1b = 21
+gate = "out1"
+nums = 3
+
+print("gate:", gate)
 
 fileOpen(gate)
 
-button1a = Button(p1a)
-button1b = Button(p1b)
+buttonsA = I2cButton(i2caddressA, nums)
+buttonsB = I2cButton(i2caddressB, nums)
 
-time1a = 0
-time1b = 0
-
-button1a.when_pressed = pressed(gate, 1, 'a')
-button1b.when_pressed = pressed(gate, 1, 'b')
-button1a.when_released = released(gate, 1, 'a')
-button1b.when_released = released(gate, 1, 'b')
-
-# pressed(gate, '1', 'a')()
-# pressed(gate, '1', 'b')()
-# pressed(gate, '1', 'b')()
-# pressed(gate, '1', 'a')()
+for i in range(nums):
+    print(i)
+    buttonsA.whenPressed(i, pressed(gate, i+1, 'a'))
+    buttonsA.whenReleased(i, released(gate, i+1, 'a'))
+    buttonsB.whenPressed(i, pressed(gate, i+1, 'b'))
+    buttonsB.whenReleased(i, released(gate, i+1, 'b'))
 
 pause()
 fileClose()

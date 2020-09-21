@@ -9,8 +9,8 @@ f = open("raw.csv", "a")
 BOUNCE_TIME=0.05
 MAX_TIME=0.05
 
-p1a = 21
-p1b = 13
+p1a = 20
+p1b = 21
 
 button1a = Button(p1a)
 button1b = Button(p1b)

@@ -3,8 +3,8 @@ import json
 import threading
 import requests
 
-baseUrl = "http://192.168.10.100:5000"
-#baseUrl = "http://127.0.0.1:5000"
+baseUrl = "http://192.168.1.100:5000"
+# baseUrl = "http://127.0.0.1:5000"
 
 
 class Counter():
@@ -100,5 +100,8 @@ class Counter():
         url = baseUrl + "/gate/" + gate + "/counter"
         data = { "gate": gate, "no": no, "t": epoch, "dir": dir }
         print(data)
-        response = requests.post(url, json=data)
-        return response.ok
+        try:
+            response = requests.post(url, json=data)
+            return response.ok
+        except:
+            print ("Cannot send data to server")
