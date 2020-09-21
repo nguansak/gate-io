@@ -53,7 +53,7 @@ class Counter():
         code = gate + "{:d}".format(no)
         
         if not code in self.map.keys():
-            self.map[code] = { "ta": 0,  "tb": 0, "sa": 0, "sb": 0, "s": "idle", "gate": gate, "no": no, "last": now, "a": 0, "b": 0, "exp":0, "in": "", "out": "", "diff": 0.0, "pat": ""  }
+            self.map[code] = { "ta": 0,  "tb": 0, "sa": 0, "sb": 0, "s": "idle", "gate": gate, "no": no, "last": now, "a": 0, "b": 0, "exp":0, "in": "", "out": "", "diff": 0.0, "diffStart": 0.0, "pat": "", "st": now  }
         # t = time, s = state
 
         val = self.map[code]
@@ -64,6 +64,9 @@ class Counter():
             diff = now - val["last"]
 
         val['diff'] = diff
+        if val["s"] == "idle":
+            val['diffStart'] = diff
+
         #print("now:  {:.6f}".format(now) + "\n" + "last: {:.6f}".format(val["last"]) + "\n" + "diff: {:0000000000.6f}".format(val["diff"]))
         data = "{:.6f}".format(now)+","+gate+","+"{:d}".format(no)+","+sensor+","+action+","+"{:.6f}".format(diff)
         # print("counter:" + data)
@@ -76,6 +79,7 @@ class Counter():
                 val[sensor] = 1
                 val["exp"] = now + self.timeout
                 val["in"] = sensor
+                val["st"] = now
         elif val["s"] == "entered":
             val["exp"] = now + self.timeout
             if action == "released":
@@ -116,11 +120,13 @@ class Counter():
         self.dumpState(val)
 
         # self.sendCountData(val["gate"], val["no"], dir, val["t"], val["pat"])
-        self.sendDataAsync.run(val["gate"], val["no"], dir, val["t"], val["pat"])
+        duration = now - val["st"]
+        self.sendDataAsync.run(val["gate"], val["no"], dir, val["t"], val["pat"], val["diffStart"], duration)
 
         val["s"] = "idle"
         val["pat"] = ""
         val["last"] = now
+        val["st"] = now
         self.map[code] = val
 
         # self.dumpState(val)
@@ -131,10 +137,10 @@ class Counter():
         diff = val["diff"]
         print('==>' + val["gate"] + "{:d}".format(val["no"]) + ', s:' + s[0:3] + ', in:' + val["in"] + ', out:' + val["out"] +", diff:{:.6f}".format(val["diff"]) + ', pat:' + val["pat"] )
 
-    def sendCountData(self, gate, no, dir, epoch, pat):
+    def sendCountData(self, gate, no, dir, epoch, pat, diff, duration):
         url = baseUrl + "/gate/" + gate + "/counter"
-        data = { "gate": gate, "no": no, "t": epoch, "dir": dir, "pat": pat }
-        csv = "COUNT:"+"{:.6f}".format(epoch)+","+"{:4s}".format(gate)+","+"{:d}".format(no)+','+"{:d}".format(dir)+","+pat
+        data = { "gate": gate, "no": no, "t": epoch, "dir": dir, "pat": pat, "diff": diff, "duration": duration }
+        csv = "COUNT:"+"{:.6f}".format(epoch)+","+"{:4s}".format(gate)+","+"{:d}".format(no)+','+"{:d}".format(dir)+","+pat+","+"{:.6f}".format(diff)+","+"{:.6f}".format(duration)
         print(csv,"\n")
         try:
             response = requests.post(url, json=data)
