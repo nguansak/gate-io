@@ -17,7 +17,7 @@ class CsvDb():
         self.f_count = open(path+"/raw_count.csv", "a")
 
         # self.reportPath = "../report"
-        self.reportPath = "E:\Dropbox\+JoM-ROG\Toyota People Counting\Hour report"
+        self.reportPath = "D:\Dropbox\+JoM-Dell\Big Counting\Hour report"
 
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
@@ -76,7 +76,7 @@ class CsvDb():
 
     def saveCount(self, gate, r):
         # print(json.dumps(r))
-        csv = "{:.6f}".format(r['t'])+","+"{:.6f}".format(r['rt'])+","+r['gate']+","+"{:d}".format(r['no'])+',"'+r['dt']+'",'+"{:d}".format(r['dir_old'])+','+"{:d}".format(r['dir'])
+        csv = "{:.6f}".format(r['t'])+","+"{:.6f}".format(r['rt'])+","+r['gate']+","+"{:d}".format(r['no'])+',"'+r['dt']+'",'+"{:d}".format(r['dir_old'])+','+"{:d}".format(r['dir'])+','+r['pat']
         print("count: " + csv)
         self.f_count.write(csv+"\n")
         self.f_count.flush()
